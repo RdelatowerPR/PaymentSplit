@@ -5,5 +5,6 @@ A basic payment split app with functionality for groups of people that want to p
 Functions:
 * Input any number of people
 * Input the amount each spent
+* Input the desired tip %
 * App calculates individual tax & tip
 * App warns if there is a remaining balance
