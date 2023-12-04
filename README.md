@@ -8,3 +8,16 @@ Functions:
 * Input the desired tip %
 * App calculates individual tax & tip
 * App warns if there is a remaining balance
+
+
+remember to run:
+
+when in -> cd PaymentAppSplit
+
+First time:
+npm install
+npm install @react-navigation/native-stack
+(make sure PersonScreen.js HomeScreen.js and App.js all exist cause any audit or npx uninstall loves deleting them randomly)
+
+start using:
+npx expo start   ***** if problems do -c at the end
