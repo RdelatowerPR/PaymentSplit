@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, ScrollView, StyleSheet } from 'react-native';
+import { View, Text, TextInput, Button, ScrollView, StyleSheet, TouchableWithoutFeedback, Keyboard } from 'react-native';
 
 export default function HomeScreen({ navigation }) {
     const [totalAmount, setTotalAmount] = useState(0);
@@ -49,6 +49,7 @@ export default function HomeScreen({ navigation }) {
     };
 
     return (
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.container}>
             <Text>Payment Split App</Text>
             <TextInput 
@@ -81,6 +82,7 @@ export default function HomeScreen({ navigation }) {
 
             <Button title="Add Person Details" onPress={() => handleNextPerson(0)} />
         </View>
+        </TouchableWithoutFeedback>
     );
 }
 
