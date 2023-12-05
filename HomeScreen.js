@@ -1,85 +1,58 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, Button, ScrollView, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
 
-export default function HomeScreen({ navigation }) {
-    const [totalAmount, setTotalAmount] = useState(0);
+function HomeScreen({ navigation, route }) {
+    const [amountBeforeTax, setAmountBeforeTax] = useState(0);
     const [taxAmount, setTaxAmount] = useState(0);
-    const [numberOfPeople, setNumberOfPeople] = useState(0);
-    const [people, setPeople] = useState([]);
-    const [remainingBalance, setRemainingBalance] = useState(0);
+    const [personsPay, setPersonsPay] = useState([]);
+    const [totalTipAmount, setTotalTipAmount] = useState([]);
 
-    const handleSubmitTotalAndTax = () => {
-        const totalWithTax = parseFloat(totalAmount) + parseFloat(taxAmount);
-        setRemainingBalance(totalWithTax);
-        const parsedNumberOfPeople = parseInt(numberOfPeople);
-        setNumberOfPeople(parsedNumberOfPeople);
-        setPeople(Array.from({ length: parsedNumberOfPeople }, () => ({ orderAmount: 0, tipPercentage: 0 })));
-    };
+    useEffect(() => {
+        // Log to debug the route parameters
+        console.log("Route Parameters: ", route.params);
 
-    const handlePersonChange = (index, field, value) => {
-        const updatedPeople = [...people];
-        updatedPeople[index] = { ...updatedPeople[index], [field]: parseFloat(value) };
-        setPeople(updatedPeople);
-    };
-
-    const handleNextPerson = (currentIndex) => {
-        if (currentIndex < numberOfPeople - 1) {
-            navigation.navigate('Person', { 
-                personIndex: currentIndex, 
-                person: people[currentIndex], 
-                handlePersonChange, 
-                handleNextPerson 
-            });
-        } else {
-            calculateFinalAmounts();
+        if (route.params) {
+            // Safely access personIndex or other parameters
+            const personIndex = route.params.personIndex || 0; // Default to 0 or appropriate value
+            const { personExpense, personTip } = route.params;
+            setPersonsPay([...personsPay, personExpense]);
+            setTotalTipAmount([...totalTipAmount, personTip]);
+    
+            // Clear the params after handling them
+            route.params.personExpense = null;
+            route.params.personTip = null;
         }
+    }, [route.params]);
+    
+
+    const calculateRemainingBalance = () => {
+        return (parseFloat(amountBeforeTax) + parseFloat(taxAmount)) - personsPay.reduce((a, b) => a + b, 0);
     };
 
-    const calculateTaxShare = () => {
-        return parseFloat(taxAmount) / numberOfPeople;
-    };
-
-    const calculateFinalAmounts = () => {
-        const taxShare = calculateTaxShare();
-        const updatedPeople = people.map(person => ({
-            ...person,
-            total: person.orderAmount + taxShare + (person.orderAmount * person.tipPercentage / 100)
-        }));
-        setPeople(updatedPeople);
+    const totalTip = () => {
+        return totalTipAmount.reduce((a, b) => a + b, 0);
     };
 
     return (
         <View style={styles.container}>
-            <Text>Payment Split App</Text>
-            <TextInput 
+            <TextInput
                 style={styles.input}
-                placeholder="Enter total amount before tax"
-                onChangeText={text => setTotalAmount(text)} 
+                placeholder="Amount Before Tax"
                 keyboardType="numeric"
+                onChangeText={(text) => setAmountBeforeTax(text)}
             />
-            <TextInput 
+            <TextInput
                 style={styles.input}
-                placeholder="Enter total tax amount"
-                onChangeText={text => setTaxAmount(text)} 
+                placeholder="Tax Amount"
                 keyboardType="numeric"
+                onChangeText={(text) => setTaxAmount(text)}
             />
-            <TextInput 
-                style={styles.input}
-                placeholder="Enter number of people"
-                onChangeText={text => setNumberOfPeople(text)} 
-                keyboardType="numeric"
+            <Text>Remaining Balance: {calculateRemainingBalance()}</Text>
+            <Text>Total Tip Amount: {totalTip()}</Text>
+            <Button
+                title="Add Person"
+                onPress={() => navigation.navigate('Person')}
             />
-            <Button title="Submit Total and Tax" onPress={handleSubmitTotalAndTax} />
-
-            <ScrollView>
-                {people.map((person, index) => (
-                    <View key={index} style={styles.personView}>
-                        <Text>{`Person ${index + 1}: Total - $${person.total ? person.total.toFixed(2) : '0.00'}`}</Text>
-                    </View>
-                ))}
-            </ScrollView>
-
-            <Button title="Add Person Details" onPress={() => handleNextPerson(0)} />
         </View>
     );
 }
@@ -89,17 +62,15 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        padding: 20
     },
     input: {
         height: 40,
         borderColor: 'gray',
         borderWidth: 1,
-        marginVertical: 10,
-        width: '100%',
-        paddingHorizontal: 10
+        marginBottom: 10,
+        width: '80%',
+        padding: 10,
     },
-    personView: {
-        marginVertical: 5
-    }
 });
+
+export default HomeScreen;

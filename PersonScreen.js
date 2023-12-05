@@ -1,58 +1,50 @@
-import React from 'react';
-import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { View, TextInput, Button, StyleSheet } from 'react-native';
 
-const PersonScreen = ({ route, navigation }) => {
-    const { personIndex, person, handlePersonChange, handleNextPerson } = route.params;
+function PersonScreen({ navigation }) {
+    const [personExpense, setPersonExpense] = useState(0);
+    const [personTip, setPersonTip] = useState(0);
 
-    const updateField = (field, value) => {
-        handlePersonChange(personIndex, field, value);
-    };
-
-    const goToNextPerson = () => {
-        handleNextPerson(personIndex, navigation);
+    const handleDone = () => {
+        navigation.navigate('Home', { personExpense: parseFloat(personExpense), personTip: parseFloat(personTip) });
     };
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>{`Person ${personIndex + 1}`}</Text>
-            <TextInput 
+            <TextInput
                 style={styles.input}
-                placeholder="Enter order amount"
-                value={person.orderAmount.toString()}
-                onChangeText={text => updateField('orderAmount', text)}
+                placeholder="Person's Expense"
                 keyboardType="numeric"
+                onChangeText={(text) => setPersonExpense(text)}
             />
-            <TextInput 
+            <TextInput
                 style={styles.input}
-                placeholder="Enter tip percentage"
-                value={person.tipPercentage.toString()}
-                onChangeText={text => updateField('tipPercentage', text)}
+                placeholder="Person's Tip Amount"
                 keyboardType="numeric"
+                onChangeText={(text) => setPersonTip(text)}
             />
-            <Button title="Next Person" onPress={goToNextPerson} />
+            <Button
+                title="Done"
+                onPress={handleDone}
+            />
         </View>
     );
-};
+}
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        padding: 20
-    },
-    title: {
-        fontSize: 20,
-        marginBottom: 20
     },
     input: {
         height: 40,
         borderColor: 'gray',
         borderWidth: 1,
-        marginVertical: 10,
-        width: '100%',
-        paddingHorizontal: 10
-    }
+        marginBottom: 10,
+        width: '80%',
+        padding: 10,
+    },
 });
 
 export default PersonScreen;
