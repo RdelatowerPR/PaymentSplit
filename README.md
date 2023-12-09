@@ -12,7 +12,7 @@ Functions:
 
 remember to run:
 
-when in -> cd PaymentAppSplit
+when in -> cd finalPayApp
 
 First time:
 npm install
