@@ -1,18 +1,21 @@
 import React from 'react';
-import { NavigationContainer } from '@react-navigation/native'; //This is what allows us to use navigation - it's a wrapper around the app
-import { createNativeStackNavigator } from '@react-navigation/native-stack'; 
-import HomeScreen from './HomeScreen'; // New component made for the home screen
-import PersonScreen from './PersonScreen'; // New component made to handle each person's order
+import { SafeAreaView, StyleSheet, StatusBar } from 'react-native';
+import HomeScreen from './HomeScreen'; // Ensure this path is correct
 
-const Stack = createNativeStackNavigator();
+const App = () => {
+  return (
+    <SafeAreaView style={styles.container}>
+      <StatusBar barStyle="dark-content" />
+      <HomeScreen />
+    </SafeAreaView>
+  );
+};
 
-export default function PaymentSplitApp() {
-    return (
-        <NavigationContainer>
-            <Stack.Navigator initialRouteName="Home">
-                <Stack.Screen name="Home" component={HomeScreen} options={{ title: 'Payment Split App' }} />
-                <Stack.Screen name="Person" component={PersonScreen} options={({ route }) => ({ title: `Person ${route.params.personIndex + 1}` })} />
-            </Stack.Navigator>
-        </NavigationContainer>
-    );
-}
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+});
+
+export default App;
